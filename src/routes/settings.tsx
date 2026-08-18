@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Moon, ShieldCheck, Sun, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AiDisclaimer } from "@/components/ai-disclaimer";
 import { AppShell } from "@/components/app-shell";
@@ -10,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -32,20 +32,7 @@ export const Route = createFileRoute("/settings")({
 
 function SettingsPage() {
   const { activity, clearActivity } = useWorkmate();
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    const stored = window.localStorage.getItem("workmate-theme");
-    const isDark = stored === "dark";
-    setDark(isDark);
-    document.documentElement.classList.toggle("dark", isDark);
-  }, []);
-
-  function toggleTheme(next: boolean) {
-    setDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    window.localStorage.setItem("workmate-theme", next ? "dark" : "light");
-  }
+  const { dark, setTheme } = useTheme();
 
   return (
     <AppShell title="Settings" description="Appearance, data and responsible AI guidelines">
@@ -59,7 +46,7 @@ function SettingsPage() {
             {dark ? <Moon className="size-4" aria-hidden /> : <Sun className="size-4" aria-hidden />}
             Dark mode
           </Label>
-          <Switch id="theme" checked={dark} onCheckedChange={toggleTheme} />
+          <Switch id="theme" checked={dark} onCheckedChange={setTheme} />
         </CardContent>
       </Card>
 
