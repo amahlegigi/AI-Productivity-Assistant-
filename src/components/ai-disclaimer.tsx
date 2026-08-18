@@ -13,12 +13,12 @@ export function AiDisclaimer({
     <div
       role="note"
       className={cn(
-        "flex gap-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-warning-foreground",
+        "flex gap-3 rounded-lg border border-warning/40 bg-warning/10 p-3 text-foreground",
         compact ? "text-xs" : "text-sm",
         className,
       )}
     >
-      <ShieldAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
+      <ShieldAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
       <p className="leading-relaxed">
         <span className="font-semibold">Responsible AI: </span>
         {AI_DISCLAIMER}

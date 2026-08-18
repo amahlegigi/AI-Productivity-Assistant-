@@ -1,6 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { HelpCircle, Lightbulb, ListChecks, Loader2, Search, Target, Trash2 } from "lucide-react";
+import {
+  CalendarClock,
+  HelpCircle,
+  Lightbulb,
+  ListChecks,
+  Loader2,
+  Mail,
+  Search,
+  Target,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AiDisclaimer, HumanReviewNote } from "@/components/ai-disclaimer";
@@ -66,7 +76,7 @@ const sections = [
 
 function ResearchPage() {
   const run = useServerFn(researchTopic);
-  const { logActivity } = useWorkmate();
+  const { logActivity, setEmailSeed, setPlannerSeed } = useWorkmate();
 
   const [topic, setTopic] = useState("");
   const [context, setContext] = useState("");
@@ -186,7 +196,39 @@ function ResearchPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm leading-relaxed">{result.summary}</p>
-              <CopyButton value={toPlainText(topic, result)} label="Copy full briefing" />
+              <div className="flex flex-wrap gap-2">
+                <CopyButton value={toPlainText(topic, result)} label="Copy full briefing" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEmailSeed({
+                      purpose: `Share research findings on: ${topic}`,
+                      recipient: "My team",
+                      mainPoints: toPlainText(topic, result),
+                    });
+                    toast.success("Briefing sent to the Email Generator");
+                  }}
+                >
+                  <Mail /> Share via Email Generator
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setPlannerSeed({
+                      tasks: result.recommendations.length
+                        ? result.recommendations.join("\n")
+                        : result.keyPoints.join("\n"),
+                      notes: `From research briefing: ${topic}`,
+                    });
+                    toast.success("Recommendations sent to the Task Planner");
+                  }}
+                  disabled={!result.recommendations.length && !result.keyPoints.length}
+                >
+                  <CalendarClock /> Send to Task Planner
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
