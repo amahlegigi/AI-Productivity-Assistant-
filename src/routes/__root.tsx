@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import { WorkmateProvider } from "../components/workmate-store";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { themeInitScript } from "../hooks/use-theme";
 
 function NotFoundComponent() {
   return (
