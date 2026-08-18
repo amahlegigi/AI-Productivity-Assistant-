@@ -4,7 +4,6 @@ import { DefaultChatTransport } from "ai";
 import { RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { AiDisclaimer } from "@/components/ai-disclaimer";
 import { AppShell } from "@/components/app-shell";
 import { CopyButton } from "@/components/copy-button";
 import { WorkmateLogo } from "@/components/workmate-logo";
@@ -165,8 +164,6 @@ function ChatPage() {
           </PromptInput>
         </CardContent>
       </Card>
-
-      <AiDisclaimer />
     </AppShell>
   );
 }
