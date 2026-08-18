@@ -5,15 +5,18 @@ import {
   LayoutDashboard,
   Mail,
   Menu,
+  Moon,
   NotebookPen,
   Search,
   Settings,
+  Sun,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { AiDisclaimer } from "@/components/ai-disclaimer";
 import { WorkmateLogo } from "@/components/workmate-logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
 
 export const navItems = [
