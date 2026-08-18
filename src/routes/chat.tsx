@@ -2,7 +2,7 @@ import { useChat } from "@ai-sdk/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DefaultChatTransport } from "ai";
 import { RotateCcw } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { CopyButton } from "@/components/copy-button";
@@ -50,6 +50,8 @@ const suggestions = [
   "Summarise this update into three bullet points for leadership",
 ];
 
+const CHAT_KEY = "workmate-chat-v1";
+
 function textOf(parts: { type: string; text?: string }[]) {
   return parts
     .filter((p) => p.type === "text")
@@ -62,6 +64,7 @@ function ChatPage() {
   const [input, setInput] = useState("");
   const transport = useMemo(() => new DefaultChatTransport({ api: "/api/chat" }), []);
 
+  const restored = useRef(false);
   const { messages, sendMessage, status, setMessages } = useChat({
     transport,
     onError: () =>
@@ -69,6 +72,30 @@ function ChatPage() {
   });
 
   const busy = status === "submitted" || status === "streaming";
+
+  // Restore the conversation so it survives navigating between features.
+  useEffect(() => {
+    if (restored.current) return;
+    restored.current = true;
+    try {
+      const raw = window.sessionStorage.getItem(CHAT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) setMessages(parsed);
+      }
+    } catch {
+      /* ignore corrupted chat state */
+    }
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!restored.current || busy) return;
+    try {
+      window.sessionStorage.setItem(CHAT_KEY, JSON.stringify(messages.slice(-40)));
+    } catch {
+      /* storage unavailable */
+    }
+  }, [messages, busy]);
 
   function send(text: string) {
     const value = text.trim();
@@ -92,6 +119,11 @@ function ChatPage() {
           size="sm"
           onClick={() => {
             setMessages([]);
+            try {
+              window.sessionStorage.removeItem(CHAT_KEY);
+            } catch {
+              /* storage unavailable */
+            }
             toast.success("Conversation cleared");
           }}
           disabled={messages.length === 0}
